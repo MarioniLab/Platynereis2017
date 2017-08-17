@@ -75,3 +75,32 @@ mat <- matrix(unlist(lapply(groups, function(n){n[[1]]$Cs})), nrow = length(grou
 mat <- mat[,order(groups$group7[[1]]$Cs, decreasing = TRUE)]
 # Plot heatmap
 pheatmap(mat, cluster_rows = FALSE, cluster_cols = FALSE, col = rainbow(10))
+
+# Compare sparse clustering to other approaches that don't depend on K
+# Dynamic tree clustering
+library(dynamicTreeCut)
+
+dist.all <- as.dist(sqrt((1 - cor(log10(exp.data[as.character(HVG$Table$GeneNames[HVG$Table$HVG == TRUE]),] + 1), method = "spearman"))/2))
+dendro <- hclust(dist.all, method = "ward.D2")
+ct <- cutreeDynamic(dendro = dendro, distM = as.matrix(dist.all), minClusterSize = 5, deepSplit = 0)
+plot(ct)
+
+plot(tsne$Y[,1], tsne$Y[,2], pch = 16, col=brewer.pal(12, "Set3")[ct])
+
+# Compare clusterings of each group with clusters of DynamicTreeCut
+
+sim.jac <- vector(length=9)
+sim.rand <- vector(length=9)
+
+for(i in 1:9){
+  sim.jac[i] =  cluster_similarity(labels1 = groups[[i]][[1]]$Cs, labels2 = ct, similarity = "jaccard")
+  sim.rand[i] =  cluster_similarity(labels1 = groups[[i]][[1]]$Cs, labels2 = ct, similarity = "rand")
+}
+
+# Figure EDF1M
+par(mar = c(5,5,2,5))
+plot(2:10, sim.jac, type="l", col="dark red", lwd=3, xlab="Number of clusters", ylab="Jaccard index")
+par(new=T)
+plot(2:10, sim.rand, type="l", col="dark blue", lwd=3, axes=F, xlab=NA, ylab=NA)
+axis(side = 4)
+mtext(side = 4, line = 3, 'Rand index')

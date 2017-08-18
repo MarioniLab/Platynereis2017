@@ -6,13 +6,13 @@ library(Rtsne)
 library(pheatmap)
 
 # Load normalized data
-exp.data <- read.table("/Users/nils/Google Drive/Platy/6th_approach/Data/Norm/norm_data.txt", sep = "\t")
+exp.data <- read.table("/Users/eling01/Google Drive/Platy/6th_approach/Data/Norm/norm_data.txt", sep = "\t")
 
 # Load cluster identities
-clusters <- read.table("/Users/nils/Google Drive/Platy/6th_approach/Results/stable_clusters_merged.txt", sep = "\t")
+clusters <- read.table("/Users/eling01/Google Drive/Platy/6th_approach/Results/stable_clusters_merged.txt", sep = "\t")
 
 # Load highly variable genes
-HVG <- read.table("/Users/nils/Google Drive/Platy/6th_approach/Results/HVG.txt", sep = "\t")
+HVG <- read.table("/Users/eling01/Google Drive/Platy/6th_approach/Results/HVG.txt", sep = "\t")
 
 # Calculate tSNE on highly variable genes
 set.seed(3)
@@ -20,6 +20,10 @@ tsne <- Rtsne(log10(t(exp.data[as.character(HVG$GeneNames[HVG$HVG == TRUE]),rown
 
 # Plot tSNE
 plot(tsne$Y[,1], tsne$Y[,2], pch = 21, bg = c("red", "yellow", "dark grey", "blue", "green", "white")[clusters$clusters])
+
+# Visualize the distribution of batches - EDF1 l
+chips <- sapply(colnames(exp.data[,rownames(clusters)]), function(n){unlist(strsplit(n, split = "x"))[1]})
+plot(tsne$Y[,1], tsne$Y[,2], pch = 21, bg = brewer.pal(9, "Set1")[as.factor(chips)])
 
 # Visualise the molecular features (specifc genes) of each cluster as determined by sparse clustering
 load("/Users/nils/Google Drive/Platy/6th_approach/Results/Iter_clust.RData")

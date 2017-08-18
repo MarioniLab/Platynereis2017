@@ -79,6 +79,7 @@ pheatmap(mat, cluster_rows = FALSE, cluster_cols = FALSE, col = rainbow(10))
 # Compare sparse clustering to other approaches that don't depend on K
 # Dynamic tree clustering
 library(dynamicTreeCut)
+library(cluster)
 
 dist.all <- as.dist(sqrt((1 - cor(log10(exp.data[as.character(HVG$Table$GeneNames[HVG$Table$HVG == TRUE]),] + 1), method = "spearman"))/2))
 dendro <- hclust(dist.all, method = "ward.D2")

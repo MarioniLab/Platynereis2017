@@ -2,7 +2,7 @@
 #### Script for cluster detection of 48hpf normalized data ####
 ###############################################################
 
-setwd("/Users/nils/Google Drive/")
+setwd("/Users/eling01/Google Drive/")
 
 library(Rtsne)
 library(sparcl)
@@ -16,13 +16,6 @@ library(clusteval)
 
 # Read in data
 load("Platy/6th_approach/Data/Norm/norm_data.RData")
-
-# Look at dimensionality reduction - color by batches
-chips <- sapply(colnames(exp.data), function(n){unlist(strsplit(n, split = "x"))[1]})
-set.seed(3)
-tsne <- Rtsne(log10(t(exp.data[as.character(HVG$Table$GeneNames[HVG$Table$HVG == TRUE]),] + 1)), perplexity = 30)
-
-plot(tsne$Y[,1], tsne$Y[,2], pch = 16, col = brewer.pal(12, "Set3")[as.factor(chips)])
 
 # Estimate the best number of clusters
 # Iterative clutstering using the sparcl package

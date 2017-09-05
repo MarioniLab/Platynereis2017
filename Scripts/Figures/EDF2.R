@@ -7,21 +7,21 @@ library(Rtsne)
 library(plot3D)
 
 # Load normalized data
-load("/Users/nils/Google Drive/Platy/6th_approach/Data/Norm/norm_data.RData")
-
-# Load highly variable genes
-HVG <- read.table("/Users/nils/Google Drive/Platy/6th_approach/Results/HVG.txt", sep = "\t")
+exp.data <- read.table("/Users/eling01/Google Drive/Platy/6th_approach/Data/Norm/norm_data.txt", sep = "\t")
 
 # Load cluster identities
-clusters <- read.table("/Users/nils/Google Drive/Platy/6th_approach/Results/stable_clusters.txt", sep = "\t", stringsAsFactors = FALSE)
+clusters <- read.table("/Users/eling01/Google Drive/Platy/6th_approach/Results/stable_clusters.txt", sep = "\t", stringsAsFactors = FALSE)
 
 # Find group specifc markers for all 7 groups
-markers <- findMarkers(log(exp.data[,rownames(clusters)] + 1), as.character(clusters$clusters))
+markers <- findMarkers(log(as.matrix(exp.data[,rownames(clusters)] + 1)), as.character(clusters$clusters))
+
+# Load highly variable genes
+HVG <- read.table("/Users/eling01/Google Drive/Platy/6th_approach/Results/HVG.txt", sep = "\t")
 
 # EDF2 a Visualize groups in tSNE
 set.seed(3)
-tsne <- Rtsne(log10(t(exp.data[as.character(HVG$Table$GeneNames[HVG$Table$HVG == TRUE]),rownames(clusters)] + 1)), perplexity = 30)
-plot(tsne$Y[,1], tsne$Y[,2], pch = 16, col = c("red", "yellow", "dark grey", "blue", "green", "brown", "purple")[clusters$clusters])
+tsne <- Rtsne(log10(t(exp.data[as.character(HVG$GeneNames[HVG$HVG == TRUE]),rownames(clusters)] + 1)), perplexity = 30)
+plot(tsne$Y[,1], tsne$Y[,2], pch = 16, col = c("red", "yellow", "dark grey", "blue", "green", "brown", "purple")[as.factor(clusters$clusters)])
 
 # EDF2 b-h Visualize closeness of groups via logFC
 pdf("/Users/eling01/Google Drive/Platy/6th_approach/Figures/Supplements/EDF2bh.pdf")
